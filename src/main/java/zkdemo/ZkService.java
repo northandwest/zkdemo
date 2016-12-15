@@ -14,8 +14,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public class ZkDockerService {
-	private static final Logger logger = LoggerFactory.getLogger(ZkDockerService.class);
+public class ZkService {
+	private static final Logger logger = LoggerFactory.getLogger(ZkService.class);
 
 	private CuratorZookeeperClient zkClient;
 
@@ -27,14 +27,13 @@ public class ZkDockerService {
 	// 需要重新注册的数据
 	private Set<ClientData> retrySet = new HashSet<ClientData>();
 
-	/**
-	 * init-method，初始化执行 将本机docker的IP地址 端口都注册到zookeeper中
-	 */
 	public void register2Zookeeper() {
 		try {
 			zkClient = CuratorZookeeperClient.getInstance("127.0.0.1");
 			ClientData client = findClientData();
+			
 			registerClientData(client);
+			
 			zkClient.addStateListener(new ZkStateListener() {
 				public void reconnected() {
 					ClientData client = findClientData();
@@ -97,8 +96,10 @@ public class ZkDockerService {
 	/** 将值写入zookeeper中 **/
 	private void registerClientData(ClientData client) throws Exception {
 		String centerPath = "/server";
-		String content = "";
+		String content = "fuck:"+client.getIpAddress();
 		String strServer = zkClient.write(centerPath, content);
+
+		Thread.sleep(60000);
 		if (!StringUtils.isBlank(strServer)) {
 			zkPathList.add(strServer);
 		}

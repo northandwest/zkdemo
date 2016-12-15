@@ -32,11 +32,6 @@ public class CuratorZookeeperClient {
 
 	private volatile static CuratorZookeeperClient instance;
 
-	/**
-	 * key:父路径，如/jobcenter/client/goodscenter
-	 * value：Map-->key:子路径，如/jobcenter/client/goodscenter/goodscenter00000001
-	 * value:路径中的值
-	 */
 	private static ConcurrentHashMap<String, Map<String, String>> zkCacheMap = new ConcurrentHashMap<String, Map<String, String>>();
 
 	public static Map<String, Map<String, String>> getZkCacheMap() {
@@ -48,7 +43,7 @@ public class CuratorZookeeperClient {
 				.retryPolicy(new RetryNTimes(RETRY_TIME, RETRY_INTERVAL)).connectionTimeoutMs(CONNECT_TIMEOUT).build();
 	}
 
-	private CuratorZookeeperClient(String zkServers) {
+	public CuratorZookeeperClient(String zkServers) {
 		if (curator == null) {
 			curator = newCurator(zkServers);
 			curator.getConnectionStateListenable().addListener(new ConnectionStateListener() {
@@ -94,10 +89,26 @@ public class CuratorZookeeperClient {
 	 * @throws Exception
 	 */
 	public String write(String path, String content) throws Exception {
-		StringBuilder sb = new StringBuilder(path);
-		String writePath = curator.create().creatingParentsIfNeeded().withMode(CreateMode.EPHEMERAL_SEQUENTIAL)
-				.forPath(sb.toString(), content.getBytes("utf-8"));
+		String writePath = "";
+		try {
+			writePath = curator.create().creatingParentsIfNeeded().withMode(CreateMode.PERSISTENT)
+					.forPath(path, content.getBytes("utf-8"));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return writePath;
+	}
+
+	public String get(String path) throws Exception {
+		String value = "";
+		try {
+			byte[] forPath = curator.getData().forPath(path);
+			
+			value = new String(forPath, "utf-8");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return value;
 	}
 
 	/**

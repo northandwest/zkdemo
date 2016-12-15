@@ -1,0 +1,14 @@
+ZkClient zkClient = new ZkClient("192.168.0.121:2181",3000);  
+  
+zkClient.subscribeChildChanges("/worker",new IZkChildListener() {  
+    @Override  
+    public void handleChildChange(String parentPath, List<String> children) throws Exception {  
+        if(children == null){  
+            System.out.println("<" + parentPath + "> is deleted");  
+            return;  
+        }  
+        for(String child : children){  
+            System.out.println("<Child>:" + child);  
+        }  
+    }  
+});  
