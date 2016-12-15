@@ -1,12 +1,12 @@
 package zkdemo;
 
-import java.util.List;
+import com.bucuoa.utils.WestZookeeperClient;
 
 public class Test {
 
 	public static void main(String[] args) {
 		
-		CuratorZookeeperClient client = CuratorZookeeperClient.getInstance("127.0.0.1");
+		WestZookeeperClient client = WestZookeeperClient.getInstance("127.0.0.1");
 		String path = "/server";
 		
 		try {
