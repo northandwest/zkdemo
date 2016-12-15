@@ -1,8 +1,6 @@
 package zkdemo;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -13,11 +11,14 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.bucuoa.utils.WestZookeeperClient;
+import com.bucuoa.utils.ZkStateListener;
+
 
 public class ZkService {
 	private static final Logger logger = LoggerFactory.getLogger(ZkService.class);
 
-	private CuratorZookeeperClient zkClient;
+	private WestZookeeperClient zkClient;
 
 	private Set<String> zkPathList = new HashSet<String>();
 	// 失败重试定时器，定时检查是否有请求失败，如有，无限次重试
@@ -29,7 +30,7 @@ public class ZkService {
 
 	public void register2Zookeeper() {
 		try {
-			zkClient = CuratorZookeeperClient.getInstance("127.0.0.1");
+			zkClient = WestZookeeperClient.getInstance("127.0.0.1");
 			ClientData client = findClientData();
 			
 			registerClientData(client);

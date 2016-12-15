@@ -18,7 +18,7 @@ public class ZkTest {
 		            return;  
 		        }  
 		        for(String child : children){  
-		            System.out.println("<Child>:" + child);  
+		            System.out.println(parentPath+" add <Child>:" + child);  
 		        }  
 		    }  
 		});  
